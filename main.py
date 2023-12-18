@@ -5,15 +5,15 @@
 середнього значення, медіани, чи сортування великого масиву чисел."""
 import threading
 import random
-
+import time
 #функція обчислення середнього значення
 def calculate_mean(arr):
     mean = sum(arr) / len(arr)
     return mean
 #великий масив данних
-data_size = 10000
+data_size = 10000000
 data = [random.randint(0, 1000) for _ in range(data_size)]
-
+start_time = time.time()
 num_threads = 4
 chunk_size = len(data) // num_threads
 chunks = [data[i: i + chunk_size] for i in range(0, len(data), chunk_size)]
@@ -33,4 +33,11 @@ for thread in threads:
 print(2,threads)
 #загальне середнє значення
 total_mean = sum(results) / len(results)
-print("Результат: ", {total_mean})
+end_time = time.time()
+print("Результат: ", {total_mean}, end_time - start_time)
+
+
+start_time = time.time()
+calculate_mean(data)
+end_time = time.time()
+print(end_time - start_time)
