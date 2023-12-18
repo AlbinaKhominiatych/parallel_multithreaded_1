@@ -1,43 +1,39 @@
-#практика
-"""Завдання на обробку даних: Створити програму,
-яка використовує threading.Thread для паралельної
-обробки даних у великому списку. Наприклад, розрахунок
-середнього значення, медіани, чи сортування великого масиву чисел."""
+"""Користувач вводить з клавіатури шлях до файлу, що
+містить набір чисел. Після чого запускаються два потоки.
+Перший потік створює новий файл, в який запише лише
+парні елементи списку. Другий потік створює новий файл,
+в який запише лише непарні елементи списку. Кількість
+парних і непарних елементів виводиться на екран.
+"""
 import threading
-import random
-import time
-#функція обчислення середнього значення
-def calculate_mean(arr):
-    mean = sum(arr) / len(arr)
-    return mean
-#великий масив данних
-data_size = 10000000
-data = [random.randint(0, 1000) for _ in range(data_size)]
-start_time = time.time()
-num_threads = 4
-chunk_size = len(data) // num_threads
-chunks = [data[i: i + chunk_size] for i in range(0, len(data), chunk_size)]
-results = []
+
+#отримання шлях від користувачя
+file_path = input("Введіть шлях до файлу: ")
+#зчитуємо файл
+with open(file_path, "r") as file:
+    numbers = [int(line.strip()) for line in file.readlines()]
+#функція для запису парних чисел
+def write_even_numbers(numbers, file_name):
+    even_numbers = [str(num) + "\n" for num in numbers if not num & 1]
+    with open(file_name, "w") as file:
+        file.writelines(even_numbers)
+    return len(even_numbers)
+
+#функція для запису непарних чисел
+def write_odd_numbers(numbers, file_name):
+    odd_numbers = [str(num) + "\n" for num in numbers if num & 1]
+    with open(file_name, "w") as file:
+        file.writelines(odd_numbers)
+    return len(odd_numbers)
+
 #створення потоків
-threads = []
-for chunk in chunks:
-    thread = threading.Thread(target=lambda x: results.append(calculate_mean(x)),
-                              args=(chunk, ))
-    threads.append(thread)
-    print(0,thread)
-    thread.start()
-#чекаємо завершення кожного потоку
-print(1, threads)
-for thread in threads:
-    thread.join()
-print(2,threads)
-#загальне середнє значення
-total_mean = sum(results) / len(results)
-end_time = time.time()
-print("Результат: ", {total_mean}, end_time - start_time)
+even_thread = threading.Thread(target=write_even_numbers, args=(numbers, "even_numbers.txt"))
+odd_thread = threading.Thread(target=write_odd_numbers, args=(numbers, "odd_numbers.txt"))
 
+even_thread.start()
+odd_thread.start()
+even_thread.join()
+odd_thread.join()
 
-start_time = time.time()
-calculate_mean(data)
-end_time = time.time()
-print(end_time - start_time)
+print("Кількість парних чисел ", write_even_numbers(numbers, "even_numbers.txt"))
+print("Кількість непарних чисел ", write_odd_numbers(numbers, "odd_numbers.txt"))
