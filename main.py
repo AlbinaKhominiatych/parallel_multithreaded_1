@@ -6,7 +6,8 @@
 парних і непарних елементів виводиться на екран.
 """
 import threading
-
+count_even_numbers = 0
+count_odd_numbers = 0
 #отримання шлях від користувачя
 file_path = input("Введіть шлях до файлу: ")
 #зчитуємо файл
@@ -15,6 +16,8 @@ with open(file_path, "r") as file:
 #функція для запису парних чисел
 def write_even_numbers(numbers, file_name):
     even_numbers = [str(num) + "\n" for num in numbers if not num & 1]
+    global count_even_numbers
+    count_even_numbers = len(even_numbers)
     with open(file_name, "w") as file:
         file.writelines(even_numbers)
     return len(even_numbers)
@@ -22,6 +25,8 @@ def write_even_numbers(numbers, file_name):
 #функція для запису непарних чисел
 def write_odd_numbers(numbers, file_name):
     odd_numbers = [str(num) + "\n" for num in numbers if num & 1]
+    global count_odd_numbers
+    count_odd_numbers = len(odd_numbers)
     with open(file_name, "w") as file:
         file.writelines(odd_numbers)
     return len(odd_numbers)
@@ -35,5 +40,5 @@ odd_thread.start()
 even_thread.join()
 odd_thread.join()
 
-print("Кількість парних чисел ", write_even_numbers(numbers, "even_numbers.txt"))
-print("Кількість непарних чисел ", write_odd_numbers(numbers, "odd_numbers.txt"))
+print("Кількість парних чисел ", count_even_numbers)
+print("Кількість непарних чисел ", count_odd_numbers)
